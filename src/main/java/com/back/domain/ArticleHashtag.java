@@ -8,21 +8,17 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Comment extends BaseEntity {
-
+public class ArticleHashtag extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // id
 
-    @JoinColumn(name = "article_id")
     @ManyToOne(optional = false)
+    @JoinColumn(name = "article_id")
     private Article article; // 게시글
 
-    @JoinColumn(name = "user_id")
     @ManyToOne(optional = false)
-    private UserAccount userAccount; // 작성자
-
-    @Column private Long parentCommentId; // 부모 댓글 id
-    @Column(nullable = false, length = 500) private String content; // 본문
+    @JoinColumn(name = "hashtag_id")
+    private Hashtag hashtag; // 해시태그ㅐ
 
 }
