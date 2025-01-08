@@ -14,6 +14,14 @@ public class Hashtag extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // id
 
-    @Column(length = 50, unique = true) private String hashtagName; // 해시태그 이름
+    @Column(length = 50, unique = true)
+    private String hashtagName; // 해시태그 이름
 
+    private Hashtag(String hashtagName) {
+        this.hashtagName = hashtagName;
+    }
+
+    public static Hashtag newHashtag(String hashtagName) {
+        return new Hashtag(hashtagName);
+    }
 }

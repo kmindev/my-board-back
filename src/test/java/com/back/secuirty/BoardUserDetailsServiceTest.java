@@ -1,7 +1,6 @@
 package com.back.secuirty;
 
 import com.back.domain.UserAccount;
-import com.back.domain.UserRoleType;
 import com.back.repository.UserAccountRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
+import static com.back.domain.UserAccountMockDataFactory.createDBUserAccount;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -25,14 +25,16 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class BoardUserDetailsServiceTest {
 
-    @InjectMocks private BoardUserDetailsService sut;
-    @Mock private UserAccountRepository userAccountRepository;
+    @InjectMocks
+    private BoardUserDetailsService sut;
+    @Mock
+    private UserAccountRepository userAccountRepository;
 
     @DisplayName("'username' 을 입력하면, 'UserDetails' 를 반환한다.")
     @Test
     void givenUsername_whenLoadUserByUsername_thenReturnsUserDetails() {
         // Given
-        UserAccount userAccount = createUser();
+        UserAccount userAccount = createDBUserAccount();
         given(userAccountRepository.findById(anyString())).willReturn(Optional.of(userAccount));
 
         // When
@@ -59,17 +61,6 @@ class BoardUserDetailsServiceTest {
         // Then
         assertThat(exception).isInstanceOf(UsernameNotFoundException.class);
         then(userAccountRepository).should().findById(anyString());
-    }
-
-    private UserAccount createUser() {
-        return UserAccount.of(
-                "user1",
-                "qwer1234",
-                "user1@naver.com",
-                "유저1",
-                null,
-                UserRoleType.USER
-        );
     }
 
 }
