@@ -21,7 +21,7 @@ public class Hashtag extends BaseEntity {
         this.hashtagName = hashtagName;
     }
 
-    public static Hashtag from(String hashtagName) {
+    public static Hashtag newHashtag(String hashtagName) {
         return new Hashtag(hashtagName);
     }
 }

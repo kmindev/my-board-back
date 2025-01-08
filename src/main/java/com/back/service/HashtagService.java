@@ -37,7 +37,7 @@ public class HashtagService {
         // DB에 없는 새로운 해시태그
         Set<Hashtag> newHashtags = hashtagNamesInContent.stream()
                 .filter(hashtagName -> !exitingHashtagNames.contains(hashtagName))
-                .map(Hashtag::from)
+                .map(Hashtag::newHashtag)
                 .collect(Collectors.toSet());
 
         if (!newHashtags.isEmpty()) {

@@ -15,7 +15,7 @@ public class HashtagMockDataFactory {
      * @return {@link Hashtag} 객체
      */
     public static Hashtag createHashtagFromHashtagName(String hashtagName) {
-        return Hashtag.from(hashtagName);
+        return Hashtag.newHashtag(hashtagName);
     }
 
     /**
@@ -30,7 +30,7 @@ public class HashtagMockDataFactory {
      * @return {@link Hashtag} 객체
      */
     public static Hashtag createDBHashtagFromIdAndHashtagName(Long id, String hashtagName) {
-        Hashtag hashtag = Hashtag.from(hashtagName);
+        Hashtag hashtag = Hashtag.newHashtag(hashtagName);
         ReflectionTestUtils.setField(hashtag, "id", id);
         return hashtag;
     }
