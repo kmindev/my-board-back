@@ -1,7 +1,7 @@
 package com.back.controler;
 
 import com.back.controler.dto.reponse.ApiResponse;
-import com.back.controler.dto.reponse.ArticleResponse;
+import com.back.controler.dto.reponse.ArticleWithHashtagsResponse;
 import com.back.controler.dto.reponse.SearchArticleResponse;
 import com.back.controler.dto.request.NewArticleRequest;
 import com.back.domain.constant.SearchType;
@@ -25,13 +25,19 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ArticleResponse>> newArticle(
+    public ResponseEntity<ApiResponse<ArticleWithHashtagsResponse>> newArticle(
             @RequestBody @Valid NewArticleRequest request,
             @AuthenticationPrincipal BoardUserDetails boardUserDetails
     ) {
         return ResponseEntity.ok().body(
                 ApiResponse.okWithData(
-                        articleService.newArticle(request.toDto(boardUserDetails.userId())).toResponse()
+                        ArticleWithHashtagsResponse.from(
+                                articleService.newArticle(request.toDto(boardUserDetails.toDto()))
+                        )
+                )
+        );
+    }
+
     @GetMapping
     public ResponseEntity<ApiResponse<Page<SearchArticleResponse>>> getArticles(
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,

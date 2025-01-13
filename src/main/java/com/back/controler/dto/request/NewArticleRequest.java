@@ -1,6 +1,7 @@
 package com.back.controler.dto.request;
 
 import com.back.service.dto.ArticleDto;
+import com.back.service.dto.UserAccountDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,8 +12,8 @@ public record NewArticleRequest(
         @NotBlank(message = "제목을 입력하세요.") String title,
         @NotBlank(message = "내용을 입력하세요.") String content
 ) {
-    public ArticleDto toDto(String userId) {
-        return ArticleDto.of(this.title, this.content, userId);
+    public ArticleDto toDto(UserAccountDto userAccountDto) {
+        return ArticleDto.of(this.title, this.content, userAccountDto);
     }
 
 }
