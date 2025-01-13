@@ -1,10 +1,12 @@
 package com.back.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -23,6 +25,10 @@ public class Article extends BaseEntity {
     @Column(nullable = false, length = 65535)
     private String content; // 본문
 
+    @ToString.Exclude
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ArticleHashtag> articleHashtags = new ArrayList<>();
+
     private Article(UserAccount userAccount, String title, String content) {
         this.userAccount = userAccount;
         this.title = title;
@@ -31,6 +37,11 @@ public class Article extends BaseEntity {
 
     public static Article newArticle(UserAccount userAccount, String title, String content) {
         return new Article(userAccount, title, content);
+    }
+
+    public void addHashtag(Hashtag hashtag) {
+        ArticleHashtag articleHashtag = ArticleHashtag.of(this, hashtag);
+        this.articleHashtags.add(articleHashtag);
     }
 
 }
