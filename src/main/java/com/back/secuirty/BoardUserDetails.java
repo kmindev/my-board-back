@@ -1,6 +1,7 @@
 package com.back.secuirty;
 
 import com.back.domain.UserAccount;
+import com.back.service.dto.UserAccountDto;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,12 @@ public record BoardUserDetails(
         String socialId,
         Collection<? extends GrantedAuthority> authorities
 ) implements UserDetails {
+
+    public UserAccountDto toDto() {
+        return UserAccountDto.of(
+                userId, userPassword, email, nickname, memo, socialProvider, socialId
+        );
+    }
 
     public static BoardUserDetails from(UserAccount userAccount) {
         return new BoardUserDetails(
@@ -66,5 +73,6 @@ public record BoardUserDetails(
     public boolean isEnabled() {
         return true;
     }
+
 
 }

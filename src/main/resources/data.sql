@@ -73,11 +73,11 @@ values ('player7849', '야구 시즌 시작', '야구 시즌 시작야구 시즌
 
 --- hashtag
 insert into hashtag (hashtag_name, created_at, created_by, modified_at, modified_by)
-values ('#java', '2002-03-31', 'admin1', '2015-03-19', 'admin1');
+values ('java', '2002-03-31', 'admin1', '2015-03-19', 'admin1');
 insert into hashtag (hashtag_name, created_at, created_by, modified_at, modified_by)
-values ('#jpa', '2007-03-13', 'admin1', '2011-05-21', 'admin1');
+values ('jpa', '2007-03-13', 'admin1', '2011-05-21', 'admin1');
 insert into hashtag (hashtag_name, created_at, created_by, modified_at, modified_by)
-values ('#spring', '2013-06-22', 'admin1', '2020-08-04', 'admin1');
+values ('spring', '2013-06-22', 'admin1', '2020-08-04', 'admin1');
 
 -- article_hashtag
 insert into article_hashtag (article_id, hashtag_id, created_at, created_by, modified_at, modified_by)

@@ -1,10 +1,18 @@
 package com.back.exception;
 
+import com.back.domain.constant.SearchType;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.util.Arrays;
+
 @Getter
 public enum ErrorCode {
+
+    // Article
+    UNEXPECTED_SEARCH_TYPE(HttpStatus.BAD_REQUEST, "잘못된 검색 타입입니다. 가능한 검색 타입: " +
+            Arrays.stream(SearchType.values()).map(SearchType::getTypeName).toList()
+    ),
 
     // UserAccount
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "유저를 찾을 수 없습니다."),
