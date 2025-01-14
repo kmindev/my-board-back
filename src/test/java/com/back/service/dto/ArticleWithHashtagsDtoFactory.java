@@ -15,7 +15,7 @@ public class ArticleWithHashtagsDtoFactory {
      * <p>
      * 기본값으로 구성된 {@link ArticleWithHashtagsDto} 객체를 생성합니다.
      * <ul>
-     *   <li>id: {@link ArticleWithHashtagsDtoFactory#DEFAULT_TITLE}</li>
+     *   <li>id: {@link ArticleWithHashtagsDtoFactory#DEFAULT_ID}</li>
      *   <li>title: {@link ArticleWithHashtagsDtoFactory#DEFAULT_TITLE}</li>
      *   <li>content: {@link ArticleWithHashtagsDtoFactory#DEFAULT_CONTENT}</li>
      *   <li>userAccountDto: {@link UserAccountDtoFactory#createUserAccountDto()}</li>
