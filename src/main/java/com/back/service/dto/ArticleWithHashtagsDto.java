@@ -4,6 +4,7 @@ import com.back.domain.Article;
 import com.back.domain.ArticleHashtag;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,7 @@ public record ArticleWithHashtagsDto(
                         .stream()
                         .map(ArticleHashtag::getHashtag)
                         .map(HashtagDto::from)
-                        .collect(Collectors.toSet()),
+                        .collect(Collectors.toCollection(LinkedHashSet::new)),
                 article.getCreatedAt(),
                 article.getCreatedBy(),
                 article.getModifiedAt(),
