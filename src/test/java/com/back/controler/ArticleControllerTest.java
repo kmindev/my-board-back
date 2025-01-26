@@ -149,7 +149,7 @@ class ArticleControllerTest {
 
     @DisplayName("게시글 검색 - 실패")
     @Test
-    void given_whenNewArticle_thenReturns4xx() throws Exception {
+    void givenNonExitingSearchType_whenNewArticle_thenReturns4xx() throws Exception {
         // Given
         String searchValue = "test1";
         String searchTypeStr = "잘못된 타입";

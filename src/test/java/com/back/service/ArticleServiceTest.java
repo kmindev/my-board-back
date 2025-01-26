@@ -77,7 +77,7 @@ class ArticleServiceTest {
         then(hashtagService).should().extractAndSaveHashtags(articleDto.content());
     }
 
-    @DisplayName("검색어와 검새타입 없이 게시글을 검색하면, 페이징 된 게시글 정보를 반환한다.")
+    @DisplayName("검색어와 검색타입 없이 게시글을 검색하면, 페이징 된 게시글 정보를 반환한다.")
     @Test
     void givenNoSearchValueAndType_whenSearchArticles_thenReturnsArticlePage() {
         // Given
