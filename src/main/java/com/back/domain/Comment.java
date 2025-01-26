@@ -22,7 +22,6 @@ public class Comment extends BaseEntity {
     @ManyToOne(optional = false)
     private UserAccount userAccount; // 작성자
 
-    @Column private Long parentCommentId; // 부모 댓글 id
     @Column(nullable = false, length = 500) private String content; // 본문
 
 }
