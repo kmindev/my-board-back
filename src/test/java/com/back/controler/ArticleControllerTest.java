@@ -5,10 +5,12 @@ import com.back.config.SecurityConfig;
 import com.back.controler.converter.SearchTypeRequestConverter;
 import com.back.controler.dto.request.NewArticleRequest;
 import com.back.domain.constant.SearchType;
+import com.back.exception.ArticleNotFoundException;
 import com.back.exception.UnexpectedSearchTypeException;
 import com.back.exception.UserNotFoundException;
 import com.back.service.ArticleService;
 import com.back.service.dto.ArticleDto;
+import com.back.service.dto.ArticleWithCommentsWithHashtagsDto;
 import com.back.service.dto.ArticleWithHashtagsDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.back.controler.dto.request.NewArticleRequestFactory.createDefaultNewArticleRequest;
+import static com.back.service.dto.ArticleWithCommentsWithHashtagsDtoFactory.createArticleWithCommentsWithHashtagsDto;
 import static com.back.service.dto.ArticleWithHashtagsDtoFactory.createArticleWithHashtagsDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -163,6 +166,39 @@ class ArticleControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.message").value(new UnexpectedSearchTypeException().getMessage()));
         then(articleService).should().searchArticles(any(Pageable.class), eq(searchValue), eq(searchType));
+    }
+
+    @DisplayName("게시글 상세 조회 - 성공")
+    @Test
+    void givenArticleId_whenGetArticleDetails_thenReturns200() throws Exception {
+        // Given
+        Long articleId = 1L;
+        ArticleWithCommentsWithHashtagsDto dto = createArticleWithCommentsWithHashtagsDto();
+        given(articleService.getArticleDetails(eq(articleId))).willReturn(dto);
+
+        // When & Then
+        mvc.perform(get("/v1/articles/" + articleId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.message").isEmpty());
+        then(articleService).should().getArticleDetails(eq(articleId));
+    }
+
+    @DisplayName("게시글 상세 조회 - 실패")
+    @Test
+    void givenNonExitingArticleId_whenGetArticleDetails_thenReturns200() throws Exception {
+        // Given
+        Long nonExitingArticleId = 100L;
+        given(articleService.getArticleDetails(eq(nonExitingArticleId))).willThrow(new ArticleNotFoundException());
+
+        // When & Then
+        mvc.perform(get("/v1/articles/" + nonExitingArticleId))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.message").value(new ArticleNotFoundException().getMessage()));
+        then(articleService).should().getArticleDetails(eq(nonExitingArticleId));
     }
 
 }

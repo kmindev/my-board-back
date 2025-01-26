@@ -4,9 +4,11 @@ import com.back.domain.Article;
 import com.back.domain.Hashtag;
 import com.back.domain.UserAccount;
 import com.back.domain.constant.SearchType;
+import com.back.exception.ArticleNotFoundException;
 import com.back.exception.UnexpectedSearchTypeException;
 import com.back.repository.ArticleRepository;
 import com.back.service.dto.ArticleDto;
+import com.back.service.dto.ArticleWithCommentsWithHashtagsDto;
 import com.back.service.dto.ArticleWithHashtagsDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +20,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
 import java.util.Set;
 
+import static com.back.domain.ArticleMockDataFactoryTest.createDBArticleFromArticleId;
 import static com.back.domain.ArticleMockDataFactoryTest.createDBArticleFromUserAccount;
 import static com.back.domain.HashtagMockDataFactory.createDBHashtagFromIdAndHashtagName;
 import static com.back.domain.UserAccountMockDataFactory.createDBUserAccountFromUserId;
@@ -121,5 +125,39 @@ class ArticleServiceTest {
         // Then
         assertThat(result).isInstanceOf(UnexpectedSearchTypeException.class);
     }
+
+    @DisplayName("게시글 id를 입력하면, 게시글 id에 해당하는 게시글 상세 정보를 반환한다.")
+    @Test
+    void givenArticleId_whenGetArticleDetails_thenReturnsArticleWithCommentsWithHashtags() {
+        // Given
+        Long articleId = 1L;
+        Article article = createDBArticleFromArticleId(articleId);
+        given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
+
+        // When
+        ArticleWithCommentsWithHashtagsDto result = sut.getArticleDetails(articleId);
+
+        // Then
+        assertThat(result.id()).isEqualTo(articleId);
+        then(articleRepository).should().findById(articleId);
+    }
+
+    @DisplayName("존재하지 않는 게시글 id를 입력하면, 예외가 발생한다.")
+    @Test
+    void givenNonExitingArticleId_whenGetArticleDetails_thenThrowsException() {
+        // Given
+        Long nonExitingArticleId = 100L;
+        given(articleRepository.findById(nonExitingArticleId)).willReturn(Optional.empty());
+
+        // When
+        ArticleNotFoundException result = assertThrows(ArticleNotFoundException.class,
+                () -> sut.getArticleDetails(nonExitingArticleId)
+        );
+
+        // Then
+        assertThat(result).isInstanceOf(ArticleNotFoundException.class);
+        then(articleRepository).should().findById(nonExitingArticleId);
+    }
+
 
 }
