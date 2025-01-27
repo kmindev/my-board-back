@@ -27,7 +27,7 @@ public class ArticleMockDataFactory {
      */
     public static Article createDBArticleFromUserAccount(UserAccount userAccount) {
         Article article = Article.newArticle(userAccount, DEFAULT_TITLE, DEFAULT_CONTENT);
-        ReflectionTestUtils.setField(article, "id", DEFAULT_ID;
+        ReflectionTestUtils.setField(article, "id", DEFAULT_ID);
         return article;
     }
 
