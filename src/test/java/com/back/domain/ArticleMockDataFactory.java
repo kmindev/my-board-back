@@ -5,7 +5,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static com.back.domain.UserAccountMockDataFactory.createDBUserAccount;
 
 
-public class ArticleMockDataFactoryTest {
+public class ArticleMockDataFactory {
 
     private static final Long DEFAULT_ID = 1L;
     private static final String DEFAULT_TITLE = "제목1";
@@ -16,9 +16,9 @@ public class ArticleMockDataFactoryTest {
      * <p>
      * 기본값으로 구성된 {@link Article} 객체를 생성합니다.
      * <ul>
-     *   <li>id: {@link ArticleMockDataFactoryTest#DEFAULT_ID}</li>
-     *   <li>title: {@link ArticleMockDataFactoryTest#DEFAULT_TITLE}</li>
-     *   <li>content: {@link ArticleMockDataFactoryTest#DEFAULT_CONTENT}</li>
+     *   <li>id: {@link ArticleMockDataFactory#DEFAULT_ID}</li>
+     *   <li>title: {@link ArticleMockDataFactory#DEFAULT_TITLE}</li>
+     *   <li>content: {@link ArticleMockDataFactory#DEFAULT_CONTENT}</li>
      *   <li>UserAccount: {@param userAccount}</li>
      * </ul>
      * </p>
@@ -36,8 +36,8 @@ public class ArticleMockDataFactoryTest {
      * 기본값으로 구성된 {@link Article} 객체를 생성합니다.
      * <ul>
      *   <li>id: {@param articleId}</li>
-     *   <li>title: {@link ArticleMockDataFactoryTest#DEFAULT_TITLE}</li>
-     *   <li>content: {@link ArticleMockDataFactoryTest#DEFAULT_CONTENT}</li>
+     *   <li>title: {@link ArticleMockDataFactory#DEFAULT_TITLE}</li>
+     *   <li>content: {@link ArticleMockDataFactory#DEFAULT_CONTENT}</li>
      *   <li>UserAccount: {@link UserAccountMockDataFactory#createDBUserAccount()}</li>
      * </ul>
      * </p>

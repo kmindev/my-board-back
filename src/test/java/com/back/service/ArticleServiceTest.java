@@ -23,8 +23,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.back.domain.ArticleMockDataFactoryTest.createDBArticleFromArticleId;
-import static com.back.domain.ArticleMockDataFactoryTest.createDBArticleFromUserAccount;
+import static com.back.domain.ArticleMockDataFactory.createDBArticleFromArticleId;
+import static com.back.domain.ArticleMockDataFactory.createDBArticleFromUserAccount;
 import static com.back.domain.HashtagMockDataFactory.createDBHashtagFromIdAndHashtagName;
 import static com.back.domain.UserAccountMockDataFactory.createDBUserAccountFromUserId;
 import static com.back.service.dto.ArticleDtoFactory.createArticleDto;
