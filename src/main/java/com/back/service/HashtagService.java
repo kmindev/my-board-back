@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,13 +33,13 @@ public class HashtagService {
         // DB에 저장해야 할 해시태그
         Set<String> exitingHashtagNames = existingHashtags.stream()
                 .map(Hashtag::getHashtagName)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         // DB에 없는 새로운 해시태그
         Set<Hashtag> newHashtags = hashtagNamesInContent.stream()
                 .filter(hashtagName -> !exitingHashtagNames.contains(hashtagName))
                 .map(Hashtag::newHashtag)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         if (!newHashtags.isEmpty()) {
             hashtagRepository.saveAll(newHashtags); // 새로운 해시태그 저장

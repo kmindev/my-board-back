@@ -79,7 +79,7 @@ values ('jpa', '2007-03-13', 'admin1', '2011-05-21', 'admin1');
 insert into hashtag (hashtag_name, created_at, created_by, modified_at, modified_by)
 values ('spring', '2013-06-22', 'admin1', '2020-08-04', 'admin1');
 
--- article_hashtag
+--- article_hashtag
 insert into article_hashtag (article_id, hashtag_id, created_at, created_by, modified_at, modified_by)
 values (1, 1, '2002-03-31', 'admin1', '2015-03-19', 'admin1');
 insert into article_hashtag (article_id, hashtag_id, created_at, created_by, modified_at, modified_by)
@@ -88,3 +88,25 @@ insert into article_hashtag (article_id, hashtag_id, created_at, created_by, mod
 values (2, 2, '2007-03-13', 'admin1', '2011-05-21', 'admin1');
 insert into article_hashtag (article_id, hashtag_id, created_at, created_by, modified_at, modified_by)
 values (3, 3, '2013-06-22', 'admin1', '2020-08-04', 'admin1');
+
+--- comment
+insert into comment (article_id, user_id, content, created_at, created_by, modified_at, modified_by)
+values (1, 'user1', '야구 시즌 시작야구 시즌 시작야구 시즌 시작123', '2002-03-31', 'user1', '2015-03-19', 'user1');
+insert into comment (article_id, user_id, content, created_at, created_by, modified_at, modified_by)
+values (1, 'admin1', '야구 시즌 시작야구', '2002-03-31', 'admin1', '2015-03-19', 'admin1');
+insert into comment (article_id, user_id, content, created_at, created_by, modified_at, modified_by)
+values (2, 'player789', '야구 시즌 시작야구 시즌 시작야구 시즌 시작123', '2002-03-31', 'player789', '2015-03-19', 'player789');
+insert into comment (article_id, user_id, content, created_at, created_by, modified_at, modified_by)
+values (3, 'user1', '우승 예상팀우승 예상팀123', '2002-03-31', 'user1', '2015-03-19', 'user1');
+insert into comment (article_id, user_id, content, created_at, created_by, modified_at, modified_by)
+values (3, 'user1', '우승 예상팀우승 예상팀qwd', '2002-03-31', 'user1', '2015-03-19', 'user1');
+insert into comment (article_id, user_id, content, created_at, created_by, modified_at, modified_by)
+values (5, 'user1', '야구 시즌 시작야구 시즌 시작123', '2002-03-31', 'user1', '2015-03-19', 'user1');
+insert into comment (article_id, user_id, content, created_at, created_by, modified_at, modified_by)
+values (5, 'user1', '야구 시즌 23', '2002-03-31', 'user1', '2015-03-19', 'user1');
+insert into comment (article_id, user_id, content, created_at, created_by, modified_at, modified_by)
+values (3, 'account4526', '야구 시23', '2002-03-31', 'account4526', '2015-03-19', 'account4526');
+insert into comment (article_id, user_id, content, created_at, created_by, modified_at, modified_by)
+values (1, 'user1', '즌 123', '2002-03-31', 'user1', '2015-03-19', 'user1');
+insert into comment (article_id, user_id, content, created_at, created_by, modified_at, modified_by)
+values (5, 'user1', '야구 시즌 시작1', '2002-03-31', 'user1', '2015-03-19', 'user1');

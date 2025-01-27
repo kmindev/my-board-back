@@ -6,6 +6,7 @@ import com.back.service.dto.HashtagDto;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,10 +31,10 @@ public record SearchArticleResponse(
                 articleWithHashtagsDto.userAccountDto().userId(),
                 articleWithHashtagsDto.hashtagDtos().stream()
                         .map(HashtagDto::hashtagName)
-                        .collect(Collectors.toSet()),
+                        .collect(Collectors.toCollection(LinkedHashSet::new)),
                 Arrays.stream(SearchType.values())
                         .map(SearchType::getTypeName)
-                        .collect(Collectors.toSet()),
+                        .collect(Collectors.toCollection(LinkedHashSet::new)),
                 articleWithHashtagsDto.createdAt(),
                 articleWithHashtagsDto.createdBy(),
                 articleWithHashtagsDto.modifiedAt(),

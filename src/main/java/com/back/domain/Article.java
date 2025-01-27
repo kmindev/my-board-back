@@ -29,6 +29,10 @@ public class Article extends BaseEntity {
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleHashtag> articleHashtags = new ArrayList<>();
 
+    @ToString.Exclude
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
     private Article(UserAccount userAccount, String title, String content) {
         this.userAccount = userAccount;
         this.title = title;

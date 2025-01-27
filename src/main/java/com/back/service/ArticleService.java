@@ -4,9 +4,11 @@ import com.back.domain.Article;
 import com.back.domain.Hashtag;
 import com.back.domain.UserAccount;
 import com.back.domain.constant.SearchType;
+import com.back.exception.ArticleNotFoundException;
 import com.back.exception.UnexpectedSearchTypeException;
 import com.back.repository.ArticleRepository;
 import com.back.service.dto.ArticleDto;
+import com.back.service.dto.ArticleWithCommentsWithHashtagsDto;
 import com.back.service.dto.ArticleWithHashtagsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -61,6 +63,13 @@ public class ArticleService {
                             Arrays.stream(searchValue.split(" ")).toList(), pageable)
                     .map(ArticleWithHashtagsDto::from);
         };
+    }
+
+    @Transactional(readOnly = true)
+    public ArticleWithCommentsWithHashtagsDto getArticleDetails(Long articleId) {
+        return articleRepository.findById(articleId)
+                .map(ArticleWithCommentsWithHashtagsDto::from)
+                .orElseThrow(ArticleNotFoundException::new);
     }
 
 }

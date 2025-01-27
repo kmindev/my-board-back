@@ -1,6 +1,7 @@
 package com.back.controler;
 
 import com.back.controler.dto.reponse.ApiResponse;
+import com.back.controler.dto.reponse.ArticleDetailsResponse;
 import com.back.controler.dto.reponse.ArticleWithHashtagsResponse;
 import com.back.controler.dto.reponse.SearchArticleResponse;
 import com.back.controler.dto.request.NewArticleRequest;
@@ -48,6 +49,15 @@ public class ArticleController {
                 ApiResponse.okWithData(
                         articleService.searchArticles(pageable, searchValue, searchType)
                                 .map(SearchArticleResponse::from)
+                )
+        );
+    }
+
+    @GetMapping("/{articleId}")
+    public ResponseEntity<ApiResponse<ArticleDetailsResponse>> getArticleDetails(@PathVariable Long articleId) {
+        return ResponseEntity.ok().body(
+                ApiResponse.okWithData(
+                        ArticleDetailsResponse.from(articleService.getArticleDetails(articleId))
                 )
         );
     }
