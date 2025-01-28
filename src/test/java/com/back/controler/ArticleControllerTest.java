@@ -3,13 +3,16 @@ package com.back.controler;
 import com.back.config.JsonDataEncoder;
 import com.back.config.SecurityConfig;
 import com.back.controler.converter.SearchTypeRequestConverter;
+import com.back.controler.dto.request.ArticleUpdateRequest;
 import com.back.controler.dto.request.NewArticleRequest;
 import com.back.domain.constant.SearchType;
 import com.back.exception.ArticleNotFoundException;
 import com.back.exception.UnexpectedSearchTypeException;
+import com.back.exception.UserMismatchException;
 import com.back.exception.UserNotFoundException;
 import com.back.service.ArticleService;
 import com.back.service.dto.ArticleDto;
+import com.back.service.dto.ArticleUpdateDto;
 import com.back.service.dto.ArticleWithCommentsWithHashtagsDto;
 import com.back.service.dto.ArticleWithHashtagsDto;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +31,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.back.controler.dto.request.ArticleUpdateRequestFactory.createArticleUpdateRequest;
 import static com.back.controler.dto.request.NewArticleRequestFactory.createDefaultNewArticleRequest;
 import static com.back.service.dto.ArticleWithCommentsWithHashtagsDtoFactory.createArticleWithCommentsWithHashtagsDto;
 import static com.back.service.dto.ArticleWithHashtagsDtoFactory.createArticleWithHashtagsDto;
@@ -35,8 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -199,6 +202,46 @@ class ArticleControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.message").value(new ArticleNotFoundException().getMessage()));
         then(articleService).should().getArticleDetails(eq(nonExitingArticleId));
+    }
+
+    @DisplayName("게시글 수정 - 성공")
+    @Test
+    void givenArticleUpdateRequest_whenUpdateArticle_thenReturns200() throws Exception {
+        // Given
+        Long articleId = 1L;
+        ArticleUpdateRequest request = createArticleUpdateRequest();
+        ArticleWithHashtagsDto articleWithHashtagsDto = createArticleWithHashtagsDto();
+        given(articleService.updateArticle(any(ArticleUpdateDto.class))).willReturn(articleWithHashtagsDto);
+
+        // When & Then
+        mvc.perform(patch("/v1/articles/" + articleId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonDataEncoder.encode(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.message").isEmpty());
+        then(articleService).should().updateArticle(any(ArticleUpdateDto.class));
+    }
+
+    @DisplayName("게시글 수정 - 실패")
+    @Test
+    void givenArticleUpdateRequest_whenUpdateArticle_thenReturns4xx() throws Exception {
+        // Given
+        Long articleId = 1L;
+        ArticleUpdateRequest request = createArticleUpdateRequest();
+        ArticleWithHashtagsDto articleWithHashtagsDto = createArticleWithHashtagsDto();
+        given(articleService.updateArticle(any(ArticleUpdateDto.class))).willThrow(new UserMismatchException());
+
+        // When & Then
+        mvc.perform(patch("/v1/articles/" + articleId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonDataEncoder.encode(request)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.message").value(new UserMismatchException().getMessage()));
+        then(articleService).should().updateArticle(any(ArticleUpdateDto.class));
     }
 
 }
