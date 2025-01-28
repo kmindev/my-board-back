@@ -11,10 +11,7 @@ import com.back.exception.UnexpectedSearchTypeException;
 import com.back.exception.UserMismatchException;
 import com.back.exception.UserNotFoundException;
 import com.back.service.ArticleService;
-import com.back.service.dto.ArticleDto;
-import com.back.service.dto.ArticleUpdateDto;
-import com.back.service.dto.ArticleWithCommentsWithHashtagsDto;
-import com.back.service.dto.ArticleWithHashtagsDto;
+import com.back.service.dto.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +71,7 @@ class ArticleControllerTest {
         // Given
         NewArticleRequest request = createDefaultNewArticleRequest();
         ArticleWithHashtagsDto articleWithHashtagsDto = createArticleWithHashtagsDto();
-        given(articleService.newArticle(any(ArticleDto.class))).willReturn(articleWithHashtagsDto);
+        given(articleService.newArticle(any(NewArticleRequestDto.class))).willReturn(articleWithHashtagsDto);
 
         // When & Then
         mvc.perform(post("/v1/articles")
@@ -84,7 +81,7 @@ class ArticleControllerTest {
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.message").isEmpty());
-        then(articleService).should().newArticle(any(ArticleDto.class));
+        then(articleService).should().newArticle(any(NewArticleRequestDto.class));
     }
 
     @DisplayName("게시글 생성 요청 - 실패")
@@ -92,7 +89,7 @@ class ArticleControllerTest {
     void givenNewArticleRequest_whenNewArticle_thenReturns4xx() throws Exception {
         // Given
         NewArticleRequest request = createDefaultNewArticleRequest();
-        given(articleService.newArticle(any(ArticleDto.class))).willThrow(new UserNotFoundException());
+        given(articleService.newArticle(any(NewArticleRequestDto.class))).willThrow(new UserNotFoundException());
 
         // When & Then
         mvc.perform(post("/v1/articles")
@@ -102,7 +99,7 @@ class ArticleControllerTest {
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.message").value(new UserNotFoundException().getMessage()));
-        then(articleService).should().newArticle(any(ArticleDto.class));
+        then(articleService).should().newArticle(any(NewArticleRequestDto.class));
     }
 
     @DisplayName("게시글 조건 검색 - 성공")

@@ -8,10 +8,7 @@ import com.back.exception.ArticleNotFoundException;
 import com.back.exception.UnexpectedSearchTypeException;
 import com.back.exception.UserMismatchException;
 import com.back.repository.ArticleRepository;
-import com.back.service.dto.ArticleDto;
-import com.back.service.dto.ArticleUpdateDto;
-import com.back.service.dto.ArticleWithCommentsWithHashtagsDto;
-import com.back.service.dto.ArticleWithHashtagsDto;
+import com.back.service.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,12 +31,12 @@ public class ArticleService {
         return articleRepository.findById(articleId).orElseThrow(ArticleNotFoundException::new);
     }
 
-    public ArticleWithHashtagsDto newArticle(ArticleDto articleDto) {
-        UserAccount userAccount = userAccountService.getUserAccount(articleDto.userAccountDto().userId());
-        Article article = articleDto.newArticle(userAccount);
+    public ArticleWithHashtagsDto newArticle(NewArticleRequestDto dto) {
+        UserAccount userAccount = userAccountService.getUserAccount(dto.userId());
+        Article article = dto.newArticle(userAccount);
         Article savedArticle = articleRepository.save(article);
 
-        Set<Hashtag> hashtags = hashtagService.extractAndSaveHashtags(articleDto.content());
+        Set<Hashtag> hashtags = hashtagService.extractAndSaveHashtags(dto.content());
         hashtags.forEach(savedArticle::addHashtag); // Casecade 옵션으로 인해 insert 쿼리 발생
 
         return ArticleWithHashtagsDto.from(savedArticle);

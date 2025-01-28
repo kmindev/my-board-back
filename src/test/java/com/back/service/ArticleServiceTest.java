@@ -8,10 +8,7 @@ import com.back.exception.ArticleNotFoundException;
 import com.back.exception.UnexpectedSearchTypeException;
 import com.back.exception.UserMismatchException;
 import com.back.repository.ArticleRepository;
-import com.back.service.dto.ArticleDto;
-import com.back.service.dto.ArticleUpdateDto;
-import com.back.service.dto.ArticleWithCommentsWithHashtagsDto;
-import com.back.service.dto.ArticleWithHashtagsDto;
+import com.back.service.dto.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,8 +25,8 @@ import java.util.Set;
 import static com.back.domain.ArticleMockDataFactory.*;
 import static com.back.domain.HashtagMockDataFactory.createDBHashtagFromIdAndHashtagName;
 import static com.back.domain.UserAccountMockDataFactory.createDBUserAccountFromUserId;
-import static com.back.service.dto.ArticleDtoFactory.createArticleDto;
 import static com.back.service.dto.ArticleUpdateDtoFactory.createArticleUpdateDto;
+import static com.back.service.dto.NewArticleRequestDtoFactory.createNewArticleRequestDto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,26 +54,26 @@ class ArticleServiceTest {
     @Test
     void givenArticleInfo_whenNewArticle_thenExtractsAndSavesHashtagsAndSavesArticleHashtag() {
         // Given
-        ArticleDto articleDto = createArticleDto();
-        UserAccount userAccount = createDBUserAccountFromUserId(articleDto.userAccountDto().userId());
+        NewArticleRequestDto newArticleRequestDto = createNewArticleRequestDto();
+        UserAccount userAccount = createDBUserAccountFromUserId(newArticleRequestDto.userId());
         Set<Hashtag> hashtags = Set.of(
                 createDBHashtagFromIdAndHashtagName(1L, "HASHTAG1"),
                 createDBHashtagFromIdAndHashtagName(2L, "HASHTAG2")
         );
         Article savedArticle = createDBArticleFromUserAccount(userAccount);
 
-        given(userAccountService.getUserAccount(articleDto.userAccountDto().userId())).willReturn(userAccount);
+        given(userAccountService.getUserAccount(newArticleRequestDto.userId())).willReturn(userAccount);
         given(articleRepository.save(any(Article.class))).willReturn(savedArticle);
-        given(hashtagService.extractAndSaveHashtags(articleDto.content())).willReturn(hashtags);
+        given(hashtagService.extractAndSaveHashtags(newArticleRequestDto.content())).willReturn(hashtags);
 
         // When
-        ArticleWithHashtagsDto result = sut.newArticle(articleDto);
+        ArticleWithHashtagsDto result = sut.newArticle(newArticleRequestDto);
 
         // Then
         assertThat(result.id()).isEqualTo(savedArticle.getId());
-        then(userAccountService).should().getUserAccount(articleDto.userAccountDto().userId());
+        then(userAccountService).should().getUserAccount(newArticleRequestDto.userId());
         then(articleRepository).should().save(any(Article.class));
-        then(hashtagService).should().extractAndSaveHashtags(articleDto.content());
+        then(hashtagService).should().extractAndSaveHashtags(newArticleRequestDto.content());
     }
 
     @DisplayName("검색어와 검색타입 없이 게시글을 검색하면, 페이징 된 게시글 정보를 반환한다.")
