@@ -8,7 +8,10 @@ import com.back.exception.ArticleNotFoundException;
 import com.back.exception.UnexpectedSearchTypeException;
 import com.back.exception.UserMismatchException;
 import com.back.repository.ArticleRepository;
-import com.back.service.dto.*;
+import com.back.service.dto.ArticleUpdateDto;
+import com.back.service.dto.ArticleWithCommentsWithHashtagsDto;
+import com.back.service.dto.ArticleWithHashtagsDto;
+import com.back.service.dto.NewArticleRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -91,6 +94,17 @@ public class ArticleService {
         findArticle.updateContent(dto.content());
 
         return ArticleWithHashtagsDto.from(findArticle);
+    }
+
+    public void deleteArticle(Long articleId, String userId) {
+        Article findArticle = findArticle(articleId);
+        UserAccount userAccount = userAccountService.getUserAccount(userId);
+
+        if (!findArticle.getUserAccount().equals(userAccount)) {
+            throw new UserMismatchException();
+        }
+
+        articleRepository.deleteById(articleId);
     }
 
 }

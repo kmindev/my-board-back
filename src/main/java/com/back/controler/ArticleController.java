@@ -78,4 +78,13 @@ public class ArticleController {
         );
     }
 
+    @DeleteMapping("/{articleId}")
+    public ResponseEntity<ApiResponse<Void>> updateArticle(
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal BoardUserDetails boardUserDetails
+    ) {
+        articleService.deleteArticle(articleId, boardUserDetails.userId());
+        return ResponseEntity.ok().body(ApiResponse.okWithMessage("삭제 성공."));
+    }
+
 }

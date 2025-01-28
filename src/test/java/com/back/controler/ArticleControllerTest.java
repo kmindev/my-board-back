@@ -11,7 +11,10 @@ import com.back.exception.UnexpectedSearchTypeException;
 import com.back.exception.UserMismatchException;
 import com.back.exception.UserNotFoundException;
 import com.back.service.ArticleService;
-import com.back.service.dto.*;
+import com.back.service.dto.ArticleUpdateDto;
+import com.back.service.dto.ArticleWithCommentsWithHashtagsDto;
+import com.back.service.dto.ArticleWithHashtagsDto;
+import com.back.service.dto.NewArticleRequestDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +37,7 @@ import static com.back.service.dto.ArticleWithCommentsWithHashtagsDtoFactory.cre
 import static com.back.service.dto.ArticleWithHashtagsDtoFactory.createArticleWithHashtagsDto;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -227,7 +229,6 @@ class ArticleControllerTest {
         // Given
         Long articleId = 1L;
         ArticleUpdateRequest request = createArticleUpdateRequest();
-        ArticleWithHashtagsDto articleWithHashtagsDto = createArticleWithHashtagsDto();
         given(articleService.updateArticle(any(ArticleUpdateDto.class))).willThrow(new UserMismatchException());
 
         // When & Then
@@ -239,6 +240,39 @@ class ArticleControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.message").value(new UserMismatchException().getMessage()));
         then(articleService).should().updateArticle(any(ArticleUpdateDto.class));
+    }
+
+
+    @DisplayName("게시글 삭제 - 성공")
+    @Test
+    void givenArticleIdAndUserId_whenDeleteArticle_thenReturns200() throws Exception {
+        // Given
+        Long articleId = 1L;
+        willDoNothing().given(articleService).deleteArticle(any(), any());
+
+        // When & Then
+        mvc.perform(delete("/v1/articles/" + articleId))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.message").value("삭제 성공."));
+        then(articleService).should().deleteArticle(any(), any());
+    }
+
+    @DisplayName("게시글 삭제 - 실패")
+    @Test
+    void givenArticleIdAndUserId_whenDeleteArticle_thenReturns4xx() throws Exception {
+        // Given
+        Long articleId = 1L;
+        willThrow(new UserMismatchException()).given(articleService).deleteArticle(any(), any());
+
+        // When & Then
+        mvc.perform(delete("/v1/articles/" + articleId))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.message").value(new UserMismatchException().getMessage()));
+        then(articleService).should().deleteArticle(any(), any());
     }
 
 }

@@ -8,7 +8,10 @@ import com.back.exception.ArticleNotFoundException;
 import com.back.exception.UnexpectedSearchTypeException;
 import com.back.exception.UserMismatchException;
 import com.back.repository.ArticleRepository;
-import com.back.service.dto.*;
+import com.back.service.dto.ArticleUpdateDto;
+import com.back.service.dto.ArticleWithCommentsWithHashtagsDto;
+import com.back.service.dto.ArticleWithHashtagsDto;
+import com.back.service.dto.NewArticleRequestDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,8 +33,7 @@ import static com.back.service.dto.NewArticleRequestDtoFactory.createNewArticleR
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 
 @DisplayName("비즈니스 로직 - 게시글")
 @ExtendWith(MockitoExtension.class)
@@ -165,7 +167,7 @@ class ArticleServiceTest {
         Long articleId = 1L;
         String updatedTitle = "Updated Title";
         String updatedContent = "Updated Content";
-        String userAccountId = "user1";
+        String userId = "user1";
         Set<Hashtag> hashtags = Set.of(
                 createDBHashtagFromIdAndHashtagName(1L, "HASHTAG1"),
                 createDBHashtagFromIdAndHashtagName(2L, "HASHTAG2")
@@ -174,13 +176,13 @@ class ArticleServiceTest {
                 articleId,
                 updatedTitle,
                 updatedContent,
-                userAccountId
+                userId
         );
-        UserAccount userAccount = createDBUserAccountFromUserId(userAccountId);
+        UserAccount userAccount = createDBUserAccountFromUserId(userId);
         Article existingArticle = createDBArticleFromArticleIdAndUserAccount(articleId, userAccount);
 
         given(articleRepository.findById(articleId)).willReturn(Optional.of(existingArticle));
-        given(userAccountService.getUserAccount(userAccountId)).willReturn(userAccount);
+        given(userAccountService.getUserAccount(userId)).willReturn(userAccount);
         given(hashtagService.extractAndSaveHashtags(updatedContent)).willReturn(hashtags);
 
         // When
@@ -194,7 +196,7 @@ class ArticleServiceTest {
         assertThat(result.hashtagDtos()).hasSize(hashtags.size());
 
         then(articleRepository).should().findById(articleId);
-        then(userAccountService).should().getUserAccount(userAccountId);
+        then(userAccountService).should().getUserAccount(userId);
         then(hashtagService).should().extractAndSaveHashtags(updatedContent);
     }
 
@@ -205,20 +207,20 @@ class ArticleServiceTest {
         Long articleId = 1L;
         String updatedTitle = "Updated Title";
         String updatedContent = "Updated Content";
-        String userAccountId = "user1";
+        String userId = "user1";
         ArticleUpdateDto articleUpdateDto = createArticleUpdateDto(
                 articleId,
                 updatedTitle,
                 updatedContent,
-                userAccountId
+                userId
         );
         String otherUserAccountId = "user2";
-        UserAccount userAccount = createDBUserAccountFromUserId(userAccountId);
+        UserAccount userAccount = createDBUserAccountFromUserId(userId);
         UserAccount otherUserAccount = createDBUserAccountFromUserId(otherUserAccountId);
         Article existingArticle = createDBArticleFromArticleIdAndUserAccount(articleId, userAccount);
 
         given(articleRepository.findById(articleId)).willReturn(Optional.of(existingArticle));
-        given(userAccountService.getUserAccount(userAccountId)).willReturn(otherUserAccount);
+        given(userAccountService.getUserAccount(userId)).willReturn(otherUserAccount);
 
         // When
         UserMismatchException result = assertThrows(UserMismatchException.class,
@@ -228,7 +230,54 @@ class ArticleServiceTest {
         // Then
         assertThat(result).isInstanceOf(UserMismatchException.class);
         then(articleRepository).should().findById(articleId);
-        then(userAccountService).should().getUserAccount(userAccountId);
+        then(userAccountService).should().getUserAccount(userId);
+    }
+
+    @DisplayName("삭제할 게시글 id와 작성자 id를 전달하면, 게시글을 삭제한다.")
+    @Test
+    void givenArticleIdAndUserId_whenDeleteArticle_thenDeletesArticle() {
+        // Given
+        Long articleId = 1L;
+        String userId = "user1";
+        UserAccount userAccount = createDBUserAccountFromUserId(userId);
+        Article existingArticle = createDBArticleFromArticleIdAndUserAccount(articleId, userAccount);
+
+        given(articleRepository.findById(articleId)).willReturn(Optional.of(existingArticle));
+        given(userAccountService.getUserAccount(userId)).willReturn(userAccount);
+        willDoNothing().given(articleRepository).deleteById(articleId);
+
+        // When
+        sut.deleteArticle(articleId, userId);
+
+        // Then
+        then(articleRepository).should().findById(articleId);
+        then(userAccountService).should().getUserAccount(userId);
+        then(articleRepository).should().deleteById(articleId);
+    }
+
+    @DisplayName("삭제할 게시글과 작성자 일치하지 않으면, 예외가 발생한다.")
+    @Test
+    void givenArticleIdAndUserId_whenDeleteArticle_thenThrowsException() {
+        // Given
+        Long articleId = 1L;
+        String userId = "user1";
+        UserAccount userAccount = createDBUserAccountFromUserId(userId);
+        String otherUserAccountId = "user2";
+        UserAccount otherUserAccount = createDBUserAccountFromUserId(otherUserAccountId);
+        Article existingArticle = createDBArticleFromArticleIdAndUserAccount(articleId, userAccount);
+
+        given(articleRepository.findById(articleId)).willReturn(Optional.of(existingArticle));
+        given(userAccountService.getUserAccount(userId)).willReturn(otherUserAccount);
+
+        // When
+        UserMismatchException result = assertThrows(UserMismatchException.class,
+                () -> sut.deleteArticle(articleId, userId)
+        );
+
+        // Then
+        assertThat(result).isInstanceOf(UserMismatchException.class);
+        then(articleRepository).should().findById(articleId);
+        then(userAccountService).should().getUserAccount(userId);
     }
 
 
