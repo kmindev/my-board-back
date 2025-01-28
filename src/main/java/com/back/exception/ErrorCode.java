@@ -14,6 +14,7 @@ public enum ErrorCode {
             Arrays.stream(SearchType.values()).map(SearchType::getTypeName).toList()
     ),
     ARTICLE_NOT_FOUND(HttpStatus.BAD_REQUEST, "게시글을 찾을 수 없습니다."),
+    USER_MISMATCH(HttpStatus.BAD_REQUEST, "작성자가 아닙니다."),
 
     // UserAccount
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "유저를 찾을 수 없습니다."),

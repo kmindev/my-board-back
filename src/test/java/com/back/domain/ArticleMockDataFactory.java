@@ -38,6 +38,25 @@ public class ArticleMockDataFactory {
      *   <li>id: {@param articleId}</li>
      *   <li>title: {@link ArticleMockDataFactory#DEFAULT_TITLE}</li>
      *   <li>content: {@link ArticleMockDataFactory#DEFAULT_CONTENT}</li>
+     *   <li>UserAccount: {@param userAccount}</li>
+     * </ul>
+     * </p>
+     *
+     * @return 기본값으로 구성된 {@link Article} 객체
+     */
+    public static Article createDBArticleFromArticleIdAndUserAccount(Long articleId, UserAccount userAccount) {
+        Article article = Article.newArticle(userAccount, DEFAULT_TITLE, DEFAULT_CONTENT);
+        ReflectionTestUtils.setField(article, "id", articleId);
+        return article;
+    }
+
+    /**
+     * <p>
+     * 기본값으로 구성된 {@link Article} 객체를 생성합니다.
+     * <ul>
+     *   <li>id: {@param articleId}</li>
+     *   <li>title: {@link ArticleMockDataFactory#DEFAULT_TITLE}</li>
+     *   <li>content: {@link ArticleMockDataFactory#DEFAULT_CONTENT}</li>
      *   <li>UserAccount: {@link UserAccountMockDataFactory#createDBUserAccount()}</li>
      * </ul>
      * </p>

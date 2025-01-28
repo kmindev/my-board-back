@@ -4,6 +4,7 @@ import com.back.controler.dto.reponse.ApiResponse;
 import com.back.controler.dto.reponse.ArticleDetailsResponse;
 import com.back.controler.dto.reponse.ArticleWithHashtagsResponse;
 import com.back.controler.dto.reponse.SearchArticleResponse;
+import com.back.controler.dto.request.ArticleUpdateRequest;
 import com.back.controler.dto.request.NewArticleRequest;
 import com.back.domain.constant.SearchType;
 import com.back.secuirty.BoardUserDetails;
@@ -58,6 +59,21 @@ public class ArticleController {
         return ResponseEntity.ok().body(
                 ApiResponse.okWithData(
                         ArticleDetailsResponse.from(articleService.getArticleDetails(articleId))
+                )
+        );
+    }
+
+    @PatchMapping("/{articleId}")
+    public ResponseEntity<ApiResponse<ArticleWithHashtagsResponse>> updateArticle(
+            @PathVariable Long articleId,
+            @RequestBody @Valid ArticleUpdateRequest request,
+            @AuthenticationPrincipal BoardUserDetails boardUserDetails
+    ) {
+        return ResponseEntity.ok().body(
+                ApiResponse.okWithData(
+                        ArticleWithHashtagsResponse.from(
+                                articleService.updateArticle(request.toDto(articleId, boardUserDetails.toDto()))
+                        )
                 )
         );
     }
