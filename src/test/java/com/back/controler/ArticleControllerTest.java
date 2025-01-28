@@ -91,7 +91,8 @@ class ArticleControllerTest {
     void givenNewArticleRequest_whenNewArticle_thenReturns4xx() throws Exception {
         // Given
         NewArticleRequest request = createDefaultNewArticleRequest();
-        given(articleService.newArticle(any(NewArticleRequestDto.class))).willThrow(new UserNotFoundException());
+        UserNotFoundException exception = new UserNotFoundException();
+        given(articleService.newArticle(any(NewArticleRequestDto.class))).willThrow(exception);
 
         // When & Then
         mvc.perform(post("/v1/articles")
@@ -100,7 +101,7 @@ class ArticleControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.message").value(new UserNotFoundException().getMessage()));
+                .andExpect(jsonPath("$.message").value(exception.getMessage()));
         then(articleService).should().newArticle(any(NewArticleRequestDto.class));
     }
 
@@ -156,8 +157,9 @@ class ArticleControllerTest {
         String searchValue = "test1";
         String searchTypeStr = "잘못된 타입";
         SearchType searchType = searchTypeRequestConverter.convert(searchTypeStr);
+        UnexpectedSearchTypeException exception = new UnexpectedSearchTypeException();
         given(articleService.searchArticles(any(Pageable.class), eq(searchValue), eq(searchType)))
-                .willThrow(new UnexpectedSearchTypeException());
+                .willThrow(exception);
 
         // When & Then
         mvc.perform(get("/v1/articles")
@@ -166,7 +168,7 @@ class ArticleControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.message").value(new UnexpectedSearchTypeException().getMessage()));
+                .andExpect(jsonPath("$.message").value(exception.getMessage()));
         then(articleService).should().searchArticles(any(Pageable.class), eq(searchValue), eq(searchType));
     }
 
@@ -192,14 +194,15 @@ class ArticleControllerTest {
     void givenNonExitingArticleId_whenGetArticleDetails_thenReturns200() throws Exception {
         // Given
         Long nonExitingArticleId = 100L;
-        given(articleService.getArticleDetails(eq(nonExitingArticleId))).willThrow(new ArticleNotFoundException());
+        ArticleNotFoundException exception = new ArticleNotFoundException();
+        given(articleService.getArticleDetails(eq(nonExitingArticleId))).willThrow(exception);
 
         // When & Then
         mvc.perform(get("/v1/articles/" + nonExitingArticleId))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.message").value(new ArticleNotFoundException().getMessage()));
+                .andExpect(jsonPath("$.message").value(exception.getMessage()));
         then(articleService).should().getArticleDetails(eq(nonExitingArticleId));
     }
 
@@ -229,7 +232,8 @@ class ArticleControllerTest {
         // Given
         Long articleId = 1L;
         ArticleUpdateRequest request = createArticleUpdateRequest();
-        given(articleService.updateArticle(any(ArticleUpdateDto.class))).willThrow(new UserMismatchException());
+        UserMismatchException exception = new UserMismatchException();
+        given(articleService.updateArticle(any(ArticleUpdateDto.class))).willThrow(exception);
 
         // When & Then
         mvc.perform(patch("/v1/articles/" + articleId)
@@ -238,7 +242,7 @@ class ArticleControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.message").value(new UserMismatchException().getMessage()));
+                .andExpect(jsonPath("$.message").value(exception.getMessage()));
         then(articleService).should().updateArticle(any(ArticleUpdateDto.class));
     }
 
@@ -264,14 +268,15 @@ class ArticleControllerTest {
     void givenArticleIdAndUserId_whenDeleteArticle_thenReturns4xx() throws Exception {
         // Given
         Long articleId = 1L;
-        willThrow(new UserMismatchException()).given(articleService).deleteArticle(any(), any());
+        UserMismatchException exception = new UserMismatchException();
+        willThrow(exception).given(articleService).deleteArticle(any(), any());
 
         // When & Then
         mvc.perform(delete("/v1/articles/" + articleId))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.message").value(new UserMismatchException().getMessage()));
+                .andExpect(jsonPath("$.message").value(exception.getMessage()));
         then(articleService).should().deleteArticle(any(), any());
     }
 
