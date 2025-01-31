@@ -2,8 +2,10 @@ package com.back.service;
 
 import com.back.domain.Article;
 import com.back.domain.Comment;
+import com.back.domain.CommentMockDataFactory;
 import com.back.domain.UserAccount;
 import com.back.exception.ArticleNotFoundException;
+import com.back.exception.UserMismatchException;
 import com.back.repository.CommentRepository;
 import com.back.service.dto.ArticleWithCommentsWithHashtagsDto;
 import com.back.service.dto.NewCommentRequestDto;
@@ -14,16 +16,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static com.back.domain.ArticleMockDataFactory.createDBArticle;
-import static com.back.domain.CommentMockDataFactory.createDBComment;
+import static com.back.domain.CommentMockDataFactory.createDBCommentFromCommentIdAndUserAccount;
 import static com.back.domain.UserAccountMockDataFactory.createDBUserAccountFromUserId;
 import static com.back.service.dto.NewCommentRequestDtoFactory.createNewCommentRequestDto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 
 @DisplayName("비즈니스 로직 - 댓글")
 @ExtendWith(MockitoExtension.class)
@@ -46,7 +49,7 @@ public class CommentServiceTest {
         NewCommentRequestDto newCommentRequestDto = createNewCommentRequestDto();
         UserAccount userAccount = createDBUserAccountFromUserId(newCommentRequestDto.userId());
         Article findArticle = createDBArticle();
-        Comment comment = createDBComment(findArticle, userAccount);
+        Comment comment = CommentMockDataFactory.createDBCommentFromArticleAndUserAccount(findArticle, userAccount);
 
         given(articleService.findArticle(anyLong())).willReturn(findArticle);
         given(userAccountService.getUserAccount(newCommentRequestDto.userId())).willReturn(userAccount);
@@ -77,6 +80,53 @@ public class CommentServiceTest {
         // Then
         assertThat(result).isInstanceOf(ArticleNotFoundException.class);
         then(articleService).should().findArticle(anyLong());
+    }
+
+    @DisplayName("삭제할 댓글 id와 작성자 id를 전달하면, 댓글을 삭제한다.")
+    @Test
+    void givenCommentIdAndUserId_whenDeleteComment_thenDeletesComment() {
+        // Given
+        Long commentId = 1L;
+        String userId = "user1";
+        UserAccount userAccount = createDBUserAccountFromUserId(userId);
+        Comment comment = createDBCommentFromCommentIdAndUserAccount(commentId, userAccount);
+
+        given(commentRepository.findById(commentId)).willReturn(Optional.of(comment));
+        given(userAccountService.getUserAccount(userId)).willReturn(userAccount);
+        willDoNothing().given(commentRepository).deleteById(commentId);
+
+        // When
+        sut.deleteComment(commentId, userId);
+
+        // Then
+        then(commentRepository).should().findById(commentId);
+        then(userAccountService).should().getUserAccount(userId);
+        then(commentRepository).should().deleteById(commentId);
+    }
+
+    @DisplayName("댓글 작성자가 일치하지 않으면, 예외가 발생한다.")
+    @Test
+    void givenCommentIdAndUserId_whenDeleteComment_thenThrowsException() {
+        // Given
+        Long commentId = 1L;
+        String userId = "user1";
+        UserAccount userAccount = createDBUserAccountFromUserId(userId);
+        String otherUserAccountId = "user2";
+        UserAccount otherUserAccount = createDBUserAccountFromUserId(otherUserAccountId);
+        Comment comment = createDBCommentFromCommentIdAndUserAccount(commentId, userAccount);
+
+        given(commentRepository.findById(commentId)).willReturn(Optional.of(comment));
+        given(userAccountService.getUserAccount(userId)).willReturn(otherUserAccount);
+
+        // When
+        UserMismatchException result = assertThrows(UserMismatchException.class,
+                () -> sut.deleteComment(commentId, userId)
+        );
+
+        // Then
+        assertThat(result).isInstanceOf(UserMismatchException.class);
+        then(commentRepository).should().findById(commentId);
+        then(userAccountService).should().getUserAccount(userId);
     }
 
 }

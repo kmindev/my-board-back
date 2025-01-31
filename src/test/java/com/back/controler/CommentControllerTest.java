@@ -4,6 +4,7 @@ import com.back.config.JsonDataEncoder;
 import com.back.config.SecurityConfig;
 import com.back.controler.dto.request.NewCommentRequest;
 import com.back.exception.ArticleNotFoundException;
+import com.back.exception.CommentNotFoundException;
 import com.back.service.CommentService;
 import com.back.service.dto.ArticleWithCommentsWithHashtagsDto;
 import com.back.service.dto.NewCommentRequestDto;
@@ -22,8 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import static com.back.controler.dto.request.NewCommentRequestFactory.createNewCommentRequest;
 import static com.back.service.dto.ArticleWithCommentsWithHashtagsDtoFactory.createArticleWithCommentsWithHashtagsDto;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -87,5 +88,39 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.message").value(exception.getMessage()));
         then(commentService).should().newComment(any(NewCommentRequestDto.class));
     }
+
+    @DisplayName("댓글 삭제 요청 - 성공")
+    @Test
+    void givenCommentId_whenDeleteComment_thenReturns200() throws Exception {
+        // Given
+        Long commentId = 1L;
+        willDoNothing().given(commentService).deleteComment(any(), any());
+
+        // When & Then
+        mvc.perform(delete("/v1/comments/" + commentId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.message").value("삭제 성공."));
+        then(commentService).should().deleteComment(any(), any());
+    }
+
+    @DisplayName("댓글 삭제 요청 - 실패")
+    @Test
+    void givenCommentId_whenDeleteComment_thenReturns4xx() throws Exception {
+        // Given
+        Long commentId = 1L;
+        CommentNotFoundException exception = new CommentNotFoundException();
+        willThrow(exception).given(commentService).deleteComment(any(), any());
+
+        // When & Then
+        mvc.perform(delete("/v1/comments/" + commentId))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.message").value(exception.getMessage()));
+        then(commentService).should().deleteComment(any(), any());
+    }
+
 
 }
