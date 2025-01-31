@@ -30,7 +30,8 @@ public class ArticleService {
     private final HashtagService hashtagService;
     private final UserAccountService userAccountService;
 
-    private Article findArticle(Long articleId) {
+    @Transactional(readOnly = true)
+    public Article findArticle(Long articleId) {
         return articleRepository.findById(articleId).orElseThrow(ArticleNotFoundException::new);
     }
 

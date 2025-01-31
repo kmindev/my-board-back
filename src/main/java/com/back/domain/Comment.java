@@ -24,4 +24,16 @@ public class Comment extends BaseEntity {
 
     @Column(nullable = false, length = 500) private String content; // 본문
 
+    private Comment(Article article, UserAccount userAccount, String content) {
+        this.article = article;
+        this.userAccount = userAccount;
+        this.content = content;
+    }
+
+    public static Comment newComment(Article article, UserAccount userAccount, String content) {
+        Comment newComment = new Comment(article, userAccount, content);
+        article.getComments().add(newComment);
+        return newComment;
+    }
+
 }
