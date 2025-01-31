@@ -9,10 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/v1/comments")
@@ -35,4 +32,12 @@ public class CommentController {
         );
     }
 
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<ApiResponse<Void>> deleteComment(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal BoardUserDetails boardUserDetails
+    ) {
+        commentService.deleteComment(commentId, boardUserDetails.userId());
+        return ResponseEntity.ok().body(ApiResponse.okWithMessage("삭제 성공."));
+    }
 }
