@@ -38,8 +38,40 @@ public class UserAccount extends BaseEntity {
         this.role = role;
     }
 
+    private UserAccount(String userId, String userPassword, String email, String nickname, String memo,
+                        String socialProvider, String socialId, UserRoleType role, String createdBy, String modifiedBy) {
+        this.userId = userId;
+        this.userPassword = userPassword;
+        this.email = email;
+        this.nickname = nickname;
+        this.memo = memo;
+        this.socialProvider = socialProvider;
+        this.socialId = socialId;
+        this.role = role;
+        this.createdBy = createdBy;
+        this.modifiedBy = modifiedBy;
+    }
+
     public static UserAccount of(String userId, String userPassword, String email, String nickname, String memo, UserRoleType role) {
         return new UserAccount(userId, userPassword, email, nickname, memo, role);
+    }
+
+    public static UserAccount createOAuth2UserAccount(
+            String userId, String userPassword, String email, String nickname, String memo,
+            String socialProvider, String socialId, UserRoleType role
+    ) {
+        return new UserAccount(
+                userId,
+                userPassword,
+                email,
+                nickname,
+                memo,
+                socialProvider,
+                socialId,
+                role,
+                userId,
+                userId
+        );
     }
 
 }
