@@ -1,10 +1,10 @@
 package com.back.config;
 
 import com.back.domain.UserRoleType;
+import com.back.secuirty.general.handler.*;
 import com.back.secuirty.oauth2.handler.OAuth2AuthFailureHandler;
 import com.back.secuirty.oauth2.handler.Oauth2AuthSuccessHandler;
-import com.back.secuirty.ApiAuthenticationFilter;
-import com.back.secuirty.handler.*;
+import com.back.secuirty.general.ApiAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.back.secuirty.handler;
+package com.back.secuirty.general.handler;
 
 import com.back.controler.dto.reponse.ApiResponse;
 import jakarta.servlet.ServletException;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static com.back.secuirty.handler.HandlerUtils.sendResponseWithBody;
+import static com.back.util.ResponseUtils.sendResponseWithBody;
 
 @Slf4j
 @Component

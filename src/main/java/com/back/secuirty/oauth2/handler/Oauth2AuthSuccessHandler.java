@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static com.back.secuirty.handler.HandlerUtils.sendResponseWithBody;
+import static com.back.util.ResponseUtils.sendResponseWithBody;
 
 /**
  * OAuth2 인증 성공 시 호출되는 핸들러

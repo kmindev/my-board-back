@@ -2,6 +2,7 @@ package com.back.secuirty;
 
 import com.back.domain.UserAccount;
 import com.back.repository.UserAccountRepository;
+import com.back.secuirty.general.BoardUserDetailsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
