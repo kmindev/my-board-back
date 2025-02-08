@@ -19,8 +19,8 @@ public class UserAccount extends BaseEntity {
     private String userId; // 유저 id
 
     @Column(nullable = false) private String userPassword; // 패스워드
-    @Column(unique = true, length = 50) private String email; // 이메일
-    @Column(unique = true, length = 50) private String nickname; // 닉네임
+    @Column(length = 50) private String email; // 이메일
+    @Column(length = 50) private String nickname; // 닉네임
     @Column private String memo; // 메모
     @Column private String socialProvider; // 소셜 로그인 제공처
     @Column private String socialId; // 유저 소셜 고유 id
