@@ -1,7 +1,7 @@
 package com.back.controler;
 
 import com.back.config.JsonDataEncoder;
-import com.back.config.SecurityConfig;
+import com.back.config.UnsecuredWebMvcTest;
 import com.back.controler.converter.SearchTypeRequestConverter;
 import com.back.controler.dto.request.ArticleUpdateRequest;
 import com.back.controler.dto.request.NewArticleRequest;
@@ -18,10 +18,7 @@ import com.back.service.dto.NewArticleRequestDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,16 +42,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("컨트롤러 - 게시글")
 @Import({JsonDataEncoder.class})
-@WebMvcTest(
-        controllers = ArticleController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class,
-        excludeFilters = {
-                @ComponentScan.Filter(
-                        type = FilterType.ASSIGNABLE_TYPE,
-                        classes = SecurityConfig.class
-                ),
-        }
-)
+@UnsecuredWebMvcTest(controllers = ArticleController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class ArticleControllerTest {
 
     @Autowired
