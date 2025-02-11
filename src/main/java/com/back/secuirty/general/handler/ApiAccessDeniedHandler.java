@@ -1,4 +1,4 @@
-package com.back.secuirty.handler;
+package com.back.secuirty.general.handler;
 
 import com.back.controler.dto.reponse.ApiResponse;
 import jakarta.servlet.ServletException;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static com.back.secuirty.handler.HandlerUtils.sendResponseWithBody;
+import static com.back.util.ResponseUtils.sendResponseWithBody;
 
 /**
  * 인증은 되었지만, 요청한 리소스에 대한 권한이 없을 때 호출되는 핸들러

@@ -1,4 +1,4 @@
-package com.back.secuirty;
+package com.back.secuirty.general;
 
 import com.back.controler.dto.request.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,5 +1,6 @@
-package com.back.secuirty;
+package com.back.secuirty.general;
 
+import com.back.secuirty.BoardUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

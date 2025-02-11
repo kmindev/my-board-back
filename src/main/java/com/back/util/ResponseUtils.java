@@ -1,4 +1,4 @@
-package com.back.secuirty.handler;
+package com.back.util;
 
 import com.back.controler.dto.reponse.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class HandlerUtils {
+public class ResponseUtils {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 

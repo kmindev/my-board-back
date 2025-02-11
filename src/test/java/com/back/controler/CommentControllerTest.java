@@ -1,7 +1,7 @@
 package com.back.controler;
 
 import com.back.config.JsonDataEncoder;
-import com.back.config.SecurityConfig;
+import com.back.config.UnsecuredWebMvcTest;
 import com.back.controler.dto.request.NewCommentRequest;
 import com.back.exception.ArticleNotFoundException;
 import com.back.exception.CommentNotFoundException;
@@ -11,10 +11,6 @@ import com.back.service.dto.NewCommentRequestDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -31,16 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("컨트롤러 - 댓글")
 @Import({JsonDataEncoder.class})
-@WebMvcTest(
-        controllers = CommentController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class,
-        excludeFilters = {
-                @ComponentScan.Filter(
-                        type = FilterType.ASSIGNABLE_TYPE,
-                        classes = SecurityConfig.class
-                ),
-        }
-)
+@UnsecuredWebMvcTest(controllers = CommentController.class)
 public class CommentControllerTest {
 
     @Autowired
